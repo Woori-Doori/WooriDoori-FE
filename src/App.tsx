@@ -1,10 +1,19 @@
-function App() {
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>WooriDoori</h1>
-      <p>프로젝트가 정상적으로 실행 중입니다.</p>
-    </main>
-  )
-}
+import styled from "styled-components";
 
-export default App
+
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+`;
+
+const App: React.FC = () => {
+  return (
+    <AppContainer>
+      
+    </AppContainer>
+  );
+};
+
+export default App;
