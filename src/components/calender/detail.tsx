@@ -1,6 +1,7 @@
 import React from 'react';
 import cardIcon from '@/util/images/card.svg';
 import naverSquare from '@/util/images/naver-square.png';
+import { useCalendarStore } from '@/stores/calendarStore';
 
 // Payment 타입
 export type Payment = { 
@@ -42,11 +43,9 @@ const Toggle: React.FC = () => {
 };
 
 // 애니메이션 모달(슬라이드 업)
-export const DetailModal: React.FC<{ 
-  detail: { day: string; data: Payment }; 
-  dateLabel: string; 
-  onClose: () => void 
-}> = ({ detail, dateLabel, onClose }) => {
+export const DetailModal: React.FC<{ dateLabel: string }> = ({ dateLabel }) => {
+  const detail = useCalendarStore((state) => state.detail);
+  const setDetail = useCalendarStore((state) => state.setDetail);
   const [open, setOpen] = React.useState(false);
   
   React.useEffect(() => {
@@ -56,8 +55,10 @@ export const DetailModal: React.FC<{
 
   const handleClose = () => {
     setOpen(false);
-    setTimeout(onClose, 200);
+    setTimeout(() => setDetail(null), 200);
   };
+
+  if (!detail) return null;
 
   return (
     <div

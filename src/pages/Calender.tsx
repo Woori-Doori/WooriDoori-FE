@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import cardIcon from '@/util/images/card.svg';
 import naverRound from '@/util/images/naver-round.png';
 import { DetailModal, Payment } from '@/components/calender/detail';
+import { useCalendarStore } from '@/stores/calendarStore';
 
 // 결제 데이터 타입
-type MonthMap = Record<string, Payment[]>; // key: day string ("1".."31")
-type YearMonthMap = Record<string, MonthMap>; // key: YYYY-MM
+type MonthMap = Record<string, Payment[]>;
+type YearMonthMap = Record<string, MonthMap>;
 
 // 결제 데이터 (JSON 형식)
 const paymentData: YearMonthMap = {
@@ -81,19 +82,24 @@ const paymentData: YearMonthMap = {
 };
 
 const ExpenseTracker = () => {
-  const [currentDate, setCurrentDate] = useState(new Date()); // 오늘 날짜 기준
-  const [selectedDate, setSelectedDate] = useState(new Date().getDate()); // 오늘 일자
+  // Zustand store 사용
+  const currentDate = useCalendarStore((state) => state.currentDate);
+  const selectedDate = useCalendarStore((state) => state.selectedDate);
+  const detail = useCalendarStore((state) => state.detail);
+  const setSelectedDate = useCalendarStore((state) => state.setSelectedDate);
+  const setDetail = useCalendarStore((state) => state.setDetail);
+  const changeMonth = useCalendarStore((state) => state.changeMonth);
+
   const dateRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
-  const [detail, setDetail] = useState<{ day: string; data: Payment } | null>(null);
 
   // Pull-to-refresh 상태
   const [pullY, setPullY] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const startYRef = React.useRef(0);
-  const THRESHOLD = 80; // 새로고침 임계치(px)
-  const MAX_PULL = 130; // 최대 당김 표시(px)
+  const THRESHOLD = 80;
+  const MAX_PULL = 130;
 
   // 해당 월의 첫날과 마지막날 계산
   const year = currentDate.getFullYear();
@@ -101,7 +107,7 @@ const ExpenseTracker = () => {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const daysInMonth = lastDay.getDate();
-  const startDayOfWeek = firstDay.getDay(); // 0 = 일요일
+  const startDayOfWeek = firstDay.getDay();
 
   // 캘린더 날짜 배열 생성
   const calendarDays = [];
@@ -127,17 +133,10 @@ const ExpenseTracker = () => {
   const totalReward = (Object.values(currentMonthData).flat() as Payment[])
     .reduce((sum, payment) => sum + payment.reward, 0);
 
-  // 월 변경
-  const changeMonth = (direction: number) => {
-    setCurrentDate(new Date(year, month + direction, 1));
-    setSelectedDate(1);
-  };
-
   // 날짜 클릭
   const handleDateClick = (day: number | null) => {
     if (day) {
       setSelectedDate(day);
-      // 해당 날짜 섹션으로 스크롤
       const dayKey = day.toString();
       if (dateRefs.current[dayKey]) {
         dateRefs.current[dayKey]!.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -176,12 +175,10 @@ const ExpenseTracker = () => {
     if (!isPulling || isRefreshing) return;
     if (pullY >= THRESHOLD) {
       setIsRefreshing(true);
-      // 새로고침 트리거: 실제 앱에서는 데이터 refetch; 여기서는 페이지 새로고침
       setTimeout(() => {
         window.location.reload();
       }, 200);
     } else {
-      // 원위치 애니메이션
       setPullY(0);
       setIsPulling(false);
     }
@@ -225,7 +222,6 @@ const ExpenseTracker = () => {
           fontSize: 12,
           position: 'relative'
         }}>
-          {/* 임계선 시각화 */}
           <div style={{
             position: 'absolute',
             top: Math.max(0, THRESHOLD - 2),
@@ -239,7 +235,7 @@ const ExpenseTracker = () => {
         </div>
       </div>
 
-      {/* 콘텐츠(아래 전체)를 Y로 이동시켜 당김 효과 */}
+      {/* 콘텐츠 */}
       <div style={{ transform: `translateY(${pullY}px)`, transition: isPulling ? 'none' : 'transform 180ms ease-out' }}>
       {/* 헤더 */}
       <div style={{
@@ -470,9 +466,7 @@ const ExpenseTracker = () => {
       {/* 상세 내역 모달 */}
       {detail && (
         <DetailModal
-          detail={detail}
           dateLabel={`${year}년 ${month+1}월 ${detail.day}일 17:11`}
-          onClose={() => setDetail(null)}
         />
       )}
     </div>
