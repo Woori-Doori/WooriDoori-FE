@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Home from "./pages/Home";
 
 
 const AppContainer = styled.div`
@@ -11,7 +12,7 @@ const AppContainer = styled.div`
 const App: React.FC = () => {
   return (
     <AppContainer>
-      
+      <Home />
     </AppContainer>
   );
 };
