@@ -3,6 +3,8 @@ import cardIcon from '@/util/images/card.svg';
 import naverRound from '@/util/images/naver-round.png';
 import { DetailModal, Payment } from '@/components/calender/detail';
 import { useCalendarStore } from '@/stores/calendarStore';
+import saveMoney from '@/util/images/save-money.png';
+import * as S from './Calender.styles';
 
 // 결제 데이터 타입
 type MonthMap = Record<string, Payment[]>;
@@ -185,283 +187,125 @@ const ExpenseTracker = () => {
   };
 
   return (
-    <div
+    <S.Container
       ref={scrollRef}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      style={{
-      width: '402px',
-      height: '878px',
-      backgroundColor: '#fff',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      overflow: 'auto',
-      position: 'relative'
-    }}
+      $pullY={pullY}
+      $isPulling={isPulling}
     >
       {/* Pull 영역 인디케이터 */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: Math.max(0, pullY),
-        background: '#f1f5f9',
-        display: pullY > 0 || isRefreshing ? 'flex' : 'none',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        transition: isPulling ? 'none' : 'height 180ms ease-out',
-        borderBottom: pullY > 0 ? '1px dashed #cbd5e1' : 'none'
-      }}>
-        <div style={{
-          width: '100%',
-          textAlign: 'center',
-          paddingBottom: 8,
-          color: '#64748b',
-          fontSize: 12,
-          position: 'relative'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: Math.max(0, THRESHOLD - 2),
-            left: 0,
-            right: 0,
-            height: 2,
-            background: '#94a3b8',
-            opacity: pullY >= THRESHOLD ? 1 : 0.5
-          }} />
+      <S.PullIndicator $pullY={pullY} $isPulling={isPulling} $isRefreshing={isRefreshing}>
+        <S.PullText>
+          <S.PullThresholdLine $pullY={pullY} $threshold={THRESHOLD} />
           {isRefreshing ? '새로고치는 중…' : pullY >= THRESHOLD ? '놓으면 새로고침' : '당겨서 새로고침'}
-        </div>
-      </div>
+        </S.PullText>
+      </S.PullIndicator>
 
       {/* 콘텐츠 */}
-      <div style={{ transform: `translateY(${pullY}px)`, transition: isPulling ? 'none' : 'transform 180ms ease-out' }}>
-      {/* 헤더 */}
-      <div style={{
-        padding: '24px 20px',
-        textAlign: 'center',
-        fontSize: '22px',
-        fontWeight: '600',
-        borderBottom: '1px solid #f0f0f0'
-      }}>
-        소비내역
-      </div>
+      <S.ContentWrapper $pullY={pullY} $isPulling={isPulling}>
+        {/* 헤더 */}
+        <S.Header>소비내역</S.Header>
 
-      {/* 캘린더 */}
-      <div style={{ padding: '20px' }}>
-        {/* 월 선택 */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: '20px',
-          gap: '20px'
-        }}>
-          <div 
-            onClick={() => changeMonth(-1)}
-            style={{ cursor: 'pointer', color: '#666', fontSize: '24px', userSelect: 'none' }}
-          >
-            ◀
-          </div>
-          <span style={{ fontSize: '18px', fontWeight: '500' }}>
-            {month + 1}월
-          </span>
-          <div 
-            onClick={() => changeMonth(1)}
-            style={{ cursor: 'pointer', color: '#666', fontSize: '24px', userSelect: 'none' }}
-          >
-            ▶
-          </div>
-        </div>
+        {/* 캘린더 */}
+        <S.CalendarSection>
+          {/* 월 선택 */}
+          <S.MonthSelector>
+            <S.ArrowButton onClick={() => changeMonth(-1)}>◀</S.ArrowButton>
+            <S.MonthLabel>{month + 1}월</S.MonthLabel>
+            <S.ArrowButton onClick={() => changeMonth(1)}>▶</S.ArrowButton>
+          </S.MonthSelector>
 
-        {/* 요일 헤더 */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          marginBottom: '12px',
-          gap: '4px'
-        }}>
-          {['일', '월', '화', '수', '목', '금', '토'].map((day, idx) => (
-            <div key={idx} style={{
-              textAlign: 'center',
-              fontSize: '14px',
-              color: idx === 0 ? '#ff4444' : idx === 6 ? '#4444ff' : '#666',
-              fontWeight: '500',
-              padding: '8px 0'
-            }}>
-              {day}
-            </div>
-          ))}
-        </div>
+          {/* 요일 헤더 */}
+          <S.WeekdayHeader>
+            {['일', '월', '화', '수', '목', '금', '토'].map((day, idx) => (
+              <S.WeekdayCell key={idx} $isSunday={idx === 0} $isSaturday={idx === 6}>
+                {day}
+              </S.WeekdayCell>
+            ))}
+          </S.WeekdayHeader>
 
-        {/* 날짜 그리드 */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          gap: '2px'
-        }}>
-          {calendarDays.map((day, idx) => {
-            const dayTotal = day ? getDayTotal(day) : 0;
-            const isSelected = day === selectedDate;
+          {/* 날짜 그리드 */}
+          <S.CalendarGrid>
+            {calendarDays.map((day, idx) => {
+              const dayTotal = day ? getDayTotal(day) : 0;
+              const isSelected = day === selectedDate;
+              
+              return (
+                <S.DateCell
+                  key={idx}
+                  onClick={() => handleDateClick(day)}
+                  $isSelected={isSelected}
+                  $hasDay={!!day}
+                >
+                  {day && (
+                    <>
+                      <S.DateNumber $isSelected={isSelected}>{day}</S.DateNumber>
+                      <S.DateAmount>
+                        {dayTotal < 0 ? dayTotal.toLocaleString() : ''}
+                      </S.DateAmount>
+                    </>
+                  )}
+                </S.DateCell>
+              );
+            })}
+          </S.CalendarGrid>
+        </S.CalendarSection>
+
+        {/* 혜택 박스 */}
+        <S.RewardBox>
+          <S.RewardIcon>
+            <img src={saveMoney} alt="saveMoney" />
+          </S.RewardIcon>
+          <S.RewardText>
+            <S.RewardLabel>
+              이번달 <span>네이버페이 우리카드 체크</span> 로
+            </S.RewardLabel>
+            <S.RewardAmount>{totalReward.toLocaleString()}원의 혜택을 받았어요!</S.RewardAmount>
+          </S.RewardText>
+        </S.RewardBox>
+
+        {/* 결제 내역 리스트 */}
+        <S.PaymentList>
+          {groupedPayments.map(([day, payments]) => {
+            const date = new Date(year, month, parseInt(day));
+            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
             
             return (
-              <div
-                key={idx}
-                onClick={() => handleDateClick(day)}
-                style={{
-                  height: '58px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  paddingTop: '8px',
-                  cursor: day ? 'pointer' : 'default',
-                  backgroundColor: isSelected ? '#f5f5f5' : 'transparent',
-                  borderRadius: '8px',
-                  position: 'relative'
-                }}
+              <S.DaySection 
+                key={day} 
+                ref={(el) => (dateRefs.current[day] = el)}
               >
-                {day && (
-                  <>
-                    <div style={{
-                      fontSize: '16px',
-                      fontWeight: isSelected ? '600' : '400',
-                      color: '#333',
-                      marginBottom: '4px',
-                      height: '20px',
-                      lineHeight: '20px'
-                    }}>
-                      {day}
-                    </div>
-                    <div style={{
-                      fontSize: '10px',
-                      color: '#ff4444',
-                      fontWeight: '500',
-                      height: '14px',
-                      lineHeight: '14px',
-                      whiteSpace: 'nowrap'
-                    }}>
-                      {dayTotal < 0 ? dayTotal.toLocaleString() : ''}
-                    </div>
-                  </>
-                )}
-              </div>
+                <S.DayLabel>{day}일 {dayOfWeek}요일</S.DayLabel>
+                
+                {payments.map((payment, idx) => (
+                  <S.PaymentCard key={idx} onClick={() => setDetail({ day, data: payment })}>
+                    <S.PaymentIcon $isNaver={payment.merchant.includes('네이버페이')}>
+                      <img 
+                        src={payment.merchant.includes('네이버페이') ? naverRound : cardIcon} 
+                        alt={payment.merchant.includes('네이버페이') ? 'naver' : 'card'} 
+                      />
+                    </S.PaymentIcon>
+                    
+                    <S.PaymentInfo>
+                      <S.PaymentAmount>{payment.amount.toLocaleString()} 원</S.PaymentAmount>
+                      <S.PaymentCompany>{payment.company}</S.PaymentCompany>
+                    </S.PaymentInfo>
+                    
+                    <S.PaymentDetail>
+                      <S.PaymentMerchant>{payment.merchant}</S.PaymentMerchant>
+                      {payment.reward > 0 && (
+                        <S.PaymentReward>+{payment.reward.toLocaleString()}원</S.PaymentReward>
+                      )}
+                    </S.PaymentDetail>
+                  </S.PaymentCard>
+                ))}
+              </S.DaySection>
             );
           })}
-        </div>
-      </div>
-
-      {/* 혜택 박스 */}
-      <div style={{
-        margin: '20px',
-        padding: '16px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px'
-      }}>
-        <div style={{
-          width: '48px',
-          height: '48px',
-          backgroundColor: '#0080ff',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '28px'
-        }}>
-          💰
-        </div>
-        <div>
-          <div style={{ fontSize: '13px', color: '#666', marginBottom: '4px' }}>
-            이번달 <span style={{ color: '#00c73c', fontWeight: '600' }}>네이버페이 우리카드 체크</span> 로
-          </div>
-          <div style={{ fontSize: '18px', color: '#0080ff', fontWeight: '700' }}>
-            {totalReward.toLocaleString()}원의 혜택을 받았어요!
-          </div>
-        </div>
-      </div>
-
-      {/* 결제 내역 리스트 */}
-      <div style={{ padding: '0 20px 20px' }}>
-        {groupedPayments.map(([day, payments]) => {
-          const date = new Date(year, month, parseInt(day));
-          const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-          
-          return (
-            <div 
-              key={day} 
-              ref={(el) => (dateRefs.current[day] = el)}
-              style={{ marginBottom: '24px' }}
-            >
-              <div style={{
-                fontSize: '14px',
-                color: '#999',
-                marginBottom: '12px',
-                fontWeight: '500'
-              }}>
-                {day}일 {dayOfWeek}요일
-              </div>
-              
-              {payments.map((payment, idx) => (
-                <div key={idx} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '16px',
-                  backgroundColor: '#fff',
-                  borderRadius: '12px',
-                  marginBottom: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                  gap: '12px',
-                  cursor: 'pointer'
-                }} onClick={() => setDetail({ day, data: payment })}>
-                  {payment.merchant.includes('네이버페이') ? (
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                      <img src={naverRound} alt="naver" style={{ width: '100%', height: '100%', display: 'block' }} />
-                    </div>
-                  ) : (
-                    <div style={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: '50%',
-                      background: '#0090FF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <img src={cardIcon} alt="card" style={{ width: 26, height: 18 }} />
-                    </div>
-                  )}
-                  
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
-                      {payment.amount.toLocaleString()} 원
-                    </div>
-                    <div style={{ fontSize: '13px', color: '#999' }}>
-                      {payment.company}
-                    </div>
-                  </div>
-                  
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '15px', fontWeight: '600' }}>
-                      {payment.merchant}
-                    </div>
-                    {payment.reward > 0 && (
-                      <div style={{ fontSize: '12px', color: '#00c73c' }}>
-                        +{payment.reward.toLocaleString()}원
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
-      </div>
+        </S.PaymentList>
+      </S.ContentWrapper>
 
       {/* 상세 내역 모달 */}
       {detail && (
@@ -469,7 +313,7 @@ const ExpenseTracker = () => {
           dateLabel={`${year}년 ${month+1}월 ${detail.day}일 17:11`}
         />
       )}
-    </div>
+    </S.Container>
   );
 };
 
