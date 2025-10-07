@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import cardIcon from '@/util/images/card.svg';
+import naverRound from '@/util/images/naver-round.png';
+import { DetailModal, Payment } from '@/components/calender/detail';
 
 // 결제 데이터 타입
-type Payment = { merchant: string; company: string; amount: number; reward: number };
 type MonthMap = Record<string, Payment[]>; // key: day string ("1".."31")
 type YearMonthMap = Record<string, MonthMap>; // key: YYYY-MM
 
@@ -64,30 +66,6 @@ const paymentData: YearMonthMap = {
     ],
     "23": [
       { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "24": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "25": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "26": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "27": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "28": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "29": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "30": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
-    ],
-    "31": [
-      { merchant: "네이버페이", company: "(주) 네이버페이", amount: -15000, reward: 150 }
     ]
   },
   "2025-09": {
@@ -107,6 +85,7 @@ const ExpenseTracker = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().getDate()); // 오늘 일자
   const dateRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const [detail, setDetail] = useState<{ day: string; data: Payment } | null>(null);
 
   // Pull-to-refresh 상태
   const [pullY, setPullY] = useState(0);
@@ -161,7 +140,7 @@ const ExpenseTracker = () => {
       // 해당 날짜 섹션으로 스크롤
       const dayKey = day.toString();
       if (dateRefs.current[dayKey]) {
-        dateRefs.current[dayKey].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        dateRefs.current[dayKey]!.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
   };
@@ -439,23 +418,27 @@ const ExpenseTracker = () => {
                   borderRadius: '12px',
                   marginBottom: '8px',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                  gap: '12px'
-                }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    backgroundColor: payment.merchant.includes('네이버페이') ? '#00c73c' : '#0080ff',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '24px',
-                    color: '#fff',
-                    fontWeight: '700',
-                    flexShrink: 0
-                  }}>
-                    {payment.merchant.includes('네이버페이') ? 'N' : '💳'}
-                  </div>
+                  gap: '12px',
+                  cursor: 'pointer'
+                }} onClick={() => setDetail({ day, data: payment })}>
+                  {payment.merchant.includes('네이버페이') ? (
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                      <img src={naverRound} alt="naver" style={{ width: '100%', height: '100%', display: 'block' }} />
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      background: '#0090FF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <img src={cardIcon} alt="card" style={{ width: 26, height: 18 }} />
+                    </div>
+                  )}
                   
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
@@ -483,6 +466,15 @@ const ExpenseTracker = () => {
         })}
       </div>
       </div>
+
+      {/* 상세 내역 모달 */}
+      {detail && (
+        <DetailModal
+          detail={detail}
+          dateLabel={`${year}년 ${month+1}월 ${detail.day}일 17:11`}
+          onClose={() => setDetail(null)}
+        />
+      )}
     </div>
   );
 };
