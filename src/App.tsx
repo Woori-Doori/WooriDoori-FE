@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import { Outlet } from "react-router-dom";
 
 const AppContainer = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const AppContainer = styled.div`
 const App: React.FC = () => {
   return (
     <AppContainer>
-      
+      <Outlet />
     </AppContainer>
   );
 };
