@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import cardIcon from '@/util/images/card.svg';
-import naverRound from '@/util/images/naver-round.png';
+import cardIcon from '@/assets/card-icon.svg';
+import naverRound from '@/assets/naver-round.png';
 import { DetailModal, Payment } from '@/components/calender/detail';
 import { useCalendarStore } from '@/stores/calendarStore';
-import saveMoney from '@/util/images/save-money.png';
+import saveMoney from '@/assets/save-money.png';
 import * as S from './Calender.styles';
 
 // 결제 데이터 타입

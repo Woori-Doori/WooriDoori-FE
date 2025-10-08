@@ -1,6 +1,6 @@
 import React from 'react';
-import cardIcon from '@/util/images/card.svg';
-import naverSquare from '@/util/images/naver-square.png';
+import cardIcon from '@/assets/card-icon.svg';
+import naverSquare from '@/assets/naver-square.png';
 import { useCalendarStore } from '@/stores/calendarStore';
 import * as S from './detail.styles';
 
