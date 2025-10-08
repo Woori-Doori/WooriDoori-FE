@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import Login from "./pages/Login";
 
 const AppContainer = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const AppContainer = styled.div`
 const App: React.FC = () => {
   return (
     <AppContainer>
-      
+      <Login />
     </AppContainer>
   );
 };

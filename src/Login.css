@@ -1,0 +1,103 @@
+/* 전체 레이아웃 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+/* 로그인 박스 */
+.login-box {
+  width: 100%;
+  max-width: 480px;
+  padding: 50px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 로고 */
+.logo-group {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.logo-img {
+  height: 60px;  
+}
+
+/* 제목 */
+.login-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 64px;
+  text-align: center;
+}
+
+/* 입력 필드 */
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: #007aff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+/* 아이디 찾기 / 비밀번호 찾기 링크 */
+.login-links {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 8px;
+  font-size: 11px;
+  color: #666;
+  margin-top: 8px;
+  margin-bottom: 128px;  
+}
+
+.login-links a {
+  color: #666;
+  text-decoration: none;
+}
+
+/* 회원가입 문구 */
+.join-link {
+  font-size: 11px;
+  color: #333;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.join-link a {
+  color: #000;
+  text-decoration: none;
+}
+
+/* 버튼 */
+.login-button {
+  width: 100%;
+  padding: 16px;
+  background-color: #007aff;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+  background-color: #0061cc;
+}
