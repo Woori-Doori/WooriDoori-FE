@@ -38,7 +38,8 @@
 
 /* 입력 필드 */
 .input-field {
-  width: 100%;
+  width: 90vw; 
+  max-width: 400px;
   padding: 14px 16px;
   margin-bottom: 16px;
   border: 1px solid #ccc;
@@ -53,16 +54,16 @@
   box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
 }
 
-/* 아이디 찾기 / 비밀번호 찾기 링크 */
+/* 아이디 & 비밀번호 찾기 링크 */
 .login-links {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  align-self: flex-end;
   gap: 8px;
   font-size: 11px;
   color: #666;
   margin-top: 8px;
-  margin-bottom: 128px;  
+  margin-bottom: 128px;
 }
 
 .login-links a {
@@ -85,7 +86,8 @@
 
 /* 버튼 */
 .login-button {
-  width: 100%;
+  width: 90vw; 
+  max-width: 400px;
   padding: 16px;
   background-color: #007aff;
   color: #fff;
@@ -100,4 +102,15 @@
 
 .login-button:hover {
   background-color: #0061cc;
+}
+
+.error-placeholder {
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  text-align: center;
 }
