@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+
 import Findid from "./pages/Findid.tsx";
 
 const AppContainer = styled.div`
