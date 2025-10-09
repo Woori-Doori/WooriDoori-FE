@@ -51,7 +51,7 @@ const Findid: React.FC = () => {
   const [sentCode, setSentCode] = useState("");
   const [isVerified, setIsVerified] = useState(false);
 
-  // ✅ 입력 중 자동 하이픈 추가
+  //  입력 중 자동 하이픈 추가
   const formatPhoneNumber = (value: string) => {
     const onlyNumbers = value.replace(/[^0-9]/g, "");
     if (onlyNumbers.length < 4) return onlyNumbers;
