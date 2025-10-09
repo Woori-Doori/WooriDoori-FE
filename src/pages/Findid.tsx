@@ -105,7 +105,7 @@ const Findid: React.FC = () => {
           인증번호 확인
         </Button>
 
-        {isVerified && <p style={{ color: "green", textAlign: "center" }}>✅ 인증 완료</p>}
+        {isVerified && <p style={{ color: "green", textAlign: "center" }}>✅ 인증 완료! </p>}
       </Form>
     </FindIdContainer>
   );
